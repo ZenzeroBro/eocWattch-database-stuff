@@ -253,6 +253,7 @@ app.post("/is_done", async (req, res) => {
         [points_add, username]
       );
       console.log("Rows affected:", res.affectedRows);
+      console.log("Username affected:", username);
       res.json({ status: "success", message: "checklist successfully appended" });
       } catch (error) {
       console.error("Update isDone error:", error);
