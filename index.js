@@ -43,6 +43,7 @@ app.post("/login", async (req, res) => {
       let userData = {
         Username: fullUserData[0].Username,
         DormName: fullUserData[0].DormName,
+        isDone: fullUserData[0].isDone,
         SpendablePoints: 100 // Default value
       };
 
@@ -168,34 +169,6 @@ app.post("/dorm_points", async (req, res) => {
 });
 
 // ------------------------------
-// IS DONE endpoint
-// ------------------------------
-app.post("/is_done", async (req, res) => {
-  try {
-    const { username } = req.body;
-
-    let Done = 0 //default value
-
-    // get the isDone thing
-    const request_result = await pool.query(`SELECT isDone FROM users WHERE username = ?`, username);
-
-    //assign the result of the get request to the isDone variable
-    Done = request_result[0][0].isDone;
-
-    res
-      .status(201)
-      .json({ status: "success", isDone: Done });
-  } catch (error) {
-    console.error("Points error:", error);
-    res
-      .status(500)
-      .json({ status: "error", message: "Something went wrong with the points" });
-  }
-
-});
-
-
-// ------------------------------
 // GET ALL PALETTES endpoint
 // ------------------------------
 app.get("/palettes", async (req, res) => {
@@ -244,6 +217,50 @@ app.post("/update_user_points", async (req, res) => {
   } catch (error) {
     console.error("Update points error:", error);
     res.status(500).json({ status: "error", message: "Failed to update points" });
+  }
+});
+
+// ------------------------------
+// SET ISDONE endpoint
+// ------------------------------
+app.post("/is_done", async (req, res) => {
+  try {
+    const { username, points_add } = req.body;
+
+    //if the points add is -1, that acts as a reset flag
+    if(points_add === -1)
+    {
+      try {
+      //set the user's isDone to 0
+      await pool.query(
+        "UPDATE Users SET isDone = 0 WHERE Username = ?",
+        [username]
+      );
+      res.json({ status: "success", message: "checklist successfully reset" });
+      } catch (error) {
+      console.error("Update isDone error:", error);
+      res.status(500).json({ status: "error", message: "Failed to update checklist" });
+      }
+    }
+
+    //otherwise, the user clicked one of the checklist
+    else
+    {
+      try {
+      //set the user's isDone to what it is plus what we need to add
+      await pool.query(
+        "UPDATE Users SET isDone = isDone + ? WHERE Username = ?",
+        [points_add, username]
+      );
+      res.json({ status: "success", message: "checklist successfully appended" });
+      } catch (error) {
+      console.error("Update isDone error:", error);
+      res.status(500).json({ status: "error", message: "Failed to update checklist" });
+      }
+    }
+  } catch (error) {
+    console.error("Update checklist error:", error);
+    res.status(500).json({ status: "error", message: "Failed to update checklist" });
   }
 });
 
