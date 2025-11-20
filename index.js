@@ -252,7 +252,7 @@ app.post("/is_done", async (req, res) => {
         "UPDATE Users SET isDone = isDone + ? WHERE Username = ?",
         [points_add, username]
       );
-      console.log("Rows affected:", result.affectedRows);
+      console.log("Rows affected:", res.affectedRows);
       res.json({ status: "success", message: "checklist successfully appended" });
       } catch (error) {
       console.error("Update isDone error:", error);
