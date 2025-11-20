@@ -226,6 +226,7 @@ app.post("/update_user_points", async (req, res) => {
 app.post("/is_done", async (req, res) => {
   try {
     const { username, points_add } = req.body;
+    const points = parseInt(points_add, 10);
 
     //if the points add is -1, that acts as a reset flag
     if(points_add === -1)
@@ -250,8 +251,9 @@ app.post("/is_done", async (req, res) => {
       //set the user's isDone to what it is plus what we need to add
       await pool.query(
         "UPDATE Users SET isDone = isDone + ? WHERE Username = ?",
-        [points_add, username]
+        [points, username]
       );
+      console.log("Rows affected:", result.affectedRows);
       res.json({ status: "success", message: "checklist successfully appended" });
       } catch (error) {
       console.error("Update isDone error:", error);
