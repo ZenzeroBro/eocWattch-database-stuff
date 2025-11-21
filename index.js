@@ -281,7 +281,7 @@ app.post("/purchase_palette", async (req, res) => {
     }
 
     // Check if user exists and get current points
-    let currentPoints = 100; // Default value
+    let currentPoints = 550; // Default value
     try {
       const [userRows] = await pool.query(
         "SELECT SpendablePoints FROM Users WHERE Username = ?",
@@ -295,7 +295,7 @@ app.post("/purchase_palette", async (req, res) => {
         });
       }
 
-      currentPoints = userRows[0].SpendablePoints || 100;
+      currentPoints = userRows[0].SpendablePoints || 550;
     } catch (error) {
       if (error.code === 'ER_BAD_FIELD_ERROR' && error.sqlMessage.includes('SpendablePoints')) {
         console.log("SpendablePoints column not found, using default value");
