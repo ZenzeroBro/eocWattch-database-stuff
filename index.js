@@ -44,7 +44,7 @@ app.post("/login", async (req, res) => {
         Username: fullUserData[0].Username,
         DormName: fullUserData[0].DormName,
         isDone: fullUserData[0].isDone,
-        SpendablePoints: 100 // Default value
+        SpendablePoints: 550 // Default value
       };
 
       try {
@@ -105,7 +105,7 @@ app.post("/signup", async (req, res) => {
     try {
       await pool.query(
         "INSERT INTO Users (Username, PasswordHash, DormName, SpendablePoints) VALUES (?, ?, ?, ?)",
-        [usernames, passHash, dormitory, 100]
+        [usernames, passHash, dormitory, 550]
       );
     } catch (error) {
       if (error.code === 'ER_BAD_FIELD_ERROR' && error.sqlMessage.includes('SpendablePoints')) {
@@ -281,7 +281,7 @@ app.post("/purchase_palette", async (req, res) => {
     }
 
     // Check if user exists and get current points
-    let currentPoints = 550; // Default value
+    let currentPoints = 100; // Default value
     try {
       const [userRows] = await pool.query(
         "SELECT SpendablePoints FROM Users WHERE Username = ?",
@@ -295,7 +295,7 @@ app.post("/purchase_palette", async (req, res) => {
         });
       }
 
-      currentPoints = userRows[0].SpendablePoints || 550;
+      currentPoints = userRows[0].SpendablePoints || 100;
     } catch (error) {
       if (error.code === 'ER_BAD_FIELD_ERROR' && error.sqlMessage.includes('SpendablePoints')) {
         console.log("SpendablePoints column not found, using default value");
