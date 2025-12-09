@@ -145,7 +145,7 @@ app.post("/dorm_points", async (req, res) => {
 
     // add the points to the given dorm 
     await pool.query(`
-      UPDATE Dorms SET TotalPoints = TotalPoints +
+      UPDATE dorms SET TotalPoints = TotalPoints +
         CASE DormName
           WHEN ? THEN ?
           WHEN ? THEN ?
